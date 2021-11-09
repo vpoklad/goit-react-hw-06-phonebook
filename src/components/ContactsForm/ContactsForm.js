@@ -1,85 +1,66 @@
-import { Component } from 'react';
+import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
-import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import s from './ContactsForm.module.css';
 
-export default class ContactsForm extends Component {
-  static propTypes = {
-    addNewContact: PropTypes.func,
-  };
+export default function ContactsForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = data => console.log({ ...data, id: uuid() });
 
-  state = {
-    name: '',
-    number: '',
-    contact: null,
-  };
-  resetForm = () => {
-    this.setState({
-      name: '',
-      number: '',
-    });
-  };
-  handleInput = e => {
-    const name = e.target.name;
-    this.setState({ [name]: e.target.value });
-  };
-  handleSubmit = e => {
-    e.preventDefault();
+  // const contact = {
+  //   id: uuid(),
+  //   name,
+  //   number,
+  // };
 
-    const { name, number } = this.state;
-    const contact = {
-      id: uuid(),
-      name,
-      number,
-    };
-    this.setState({ contact });
-    this.resetForm();
-    this.props.addNewContact(contact);
-  };
-  render() {
-    const { handleSubmit, handleInput } = this;
-    const { name, number } = this.state;
-    return (
-      <form className={s.form} onSubmit={handleSubmit}>
-        <label className={s.label} htmlFor="name">
-          Name
-          <input
-            onChange={handleInput}
-            id="name"
-            type="text"
-            name="name"
-            value={name}
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-            required
-          />
-        </label>
+  return (
+    <form className={s.form} onSubmit={handleSubmit(onSubmit)}>
+      <label className={s.label}>
+        Name
+        <input
+          type="text"
+          title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
+          {...register('name', { required: true, pattern: /^[A-Za-z]+$/i })}
+        />
+        {errors?.name?.type === 'required' && (
+          <p className={s.error}>This field is required</p>
+        )}
+        {errors?.name?.type === 'pattern' && (
+          <p className={s.error}>Alphabetical characters only</p>
+        )}
+      </label>
 
-        <label htmlFor="number" className={s.label}>
-          Number
-          <input
-            onChange={handleInput}
-            id="number"
-            value={number}
-            type="tel"
-            name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
-            required
-          />
-        </label>
-        <Button
-          variant="contained"
-          type="submit"
-          size="small"
-          endIcon={<SendIcon />}
-        >
-          Add contact
-        </Button>
-        {/* <button type="submit">Add contact</button> */}
-      </form>
-    );
-  }
+      <label className={s.label}>
+        Number
+        <input
+          type="tel"
+          {...register('number', {
+            required: true,
+            pattern: /^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$/im,
+          })}
+          title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+        />
+        {errors?.number?.type === 'required' && (
+          <p className={s.error}>This field is required</p>
+        )}
+        {errors?.number?.type === 'pattern' && (
+          <p className={s.error}>Numeric characters only</p>
+        )}
+      </label>
+      <Button
+        variant="contained"
+        type="submit"
+        size="small"
+        endIcon={<SendIcon />}
+      >
+        Add contact
+      </Button>
+      {/* <button type="submit">Add contact</button> */}
+    </form>
+  );
 }
