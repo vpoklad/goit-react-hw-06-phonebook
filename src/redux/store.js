@@ -1,5 +1,6 @@
 import { combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import { types } from '../redux/types';
 
 const initialContacts = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
@@ -10,15 +11,31 @@ const initialContacts = [
 
 const contactReducer = (state = initialContacts, { type, payload }) => {
   switch (type) {
-    case 'contacts/add':
-      return [...state, payload];
-
+    case types.ADD_CONTACT:
+      const existContact = state.some(
+        el => el.name.toLowerCase() === payload.name.toLowerCase(),
+      );
+      if (existContact) {
+        alert(`this contact already exists`);
+        return state;
+      } else {
+        return [...state, payload];
+      }
+    case types.DELETE_CONTACT:
+      return state.filter(contact => contact.id !== payload);
     default:
       return state;
   }
 };
+
 const filterReducer = (state = '', { type, payload }) => {
-  return state;
+  switch (type) {
+    case types.SET_FILTER:
+      return payload;
+
+    default:
+      return state;
+  }
 };
 
 const rootReducer = combineReducers({

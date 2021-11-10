@@ -8,11 +8,7 @@ export default function ContactItem({ contact, handleDelItem }) {
       <span>
         {contact.name}: <span>{contact.number}</span>
       </span>
-      <IconButton
-        aria-label="delete"
-        id={contact.id}
-        onClick={() => handleDelItem(contact.id)}
-      >
+      <IconButton aria-label="delete" id={contact.id} onClick={handleDelItem}>
         <DeleteIcon />
       </IconButton>
     </li>

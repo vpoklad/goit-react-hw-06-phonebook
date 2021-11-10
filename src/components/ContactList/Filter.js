@@ -1,6 +1,9 @@
 import TextField from '@mui/material/TextField';
 import PropTypes from 'prop-types';
-export default function Filter({ value = ' ', handlChange }) {
+import { connect } from 'react-redux';
+import { setFilter } from '../../redux/actions';
+
+function Filter({ value, handleChange }) {
   return (
     <>
       <TextField
@@ -9,7 +12,7 @@ export default function Filter({ value = ' ', handlChange }) {
         type="search"
         variant="standard"
         value={value}
-        onChange={handlChange}
+        onChange={handleChange}
       />
     </>
   );
@@ -18,3 +21,11 @@ Filter.propTypes = {
   value: PropTypes.string,
   handlChange: PropTypes.func,
 };
+
+const mapStateToProps = state => ({
+  value: state.filter,
+});
+const mapDispatchToProps = dispatch => ({
+  handleChange: e => dispatch(setFilter(e.target.value)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);

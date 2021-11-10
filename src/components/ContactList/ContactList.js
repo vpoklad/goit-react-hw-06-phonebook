@@ -1,7 +1,9 @@
 import ContactItem from './ContactItem';
 import s from './ContactList.module.css';
 import PropTypes from 'prop-types';
-export default function ContactList({ contacts, handleDelItem }) {
+import { connect } from 'react-redux';
+import { deleteContact } from '../../redux/actions';
+function ContactList({ contacts, handleDelItem }) {
   return (
     <>
       <h2 className={s.title}>Contacts</h2>
@@ -10,7 +12,7 @@ export default function ContactList({ contacts, handleDelItem }) {
           <ContactItem
             key={contact.id}
             contact={contact}
-            handleDelItem={handleDelItem}
+            handleDelItem={() => handleDelItem(contact.id)}
           />
         ))}
       </ul>
@@ -22,3 +24,12 @@ ContactList.propTypes = {
   contacts: PropTypes.array,
   handleDelItem: PropTypes.func,
 };
+const mapStateToProps = state => ({
+  contacts: state.contacts.filter(contact =>
+    contact.name.toLocaleLowerCase().includes(state.filter.toLowerCase()),
+  ),
+});
+const mapDispatchToProps = dispatch => ({
+  handleDelItem: id => dispatch(deleteContact(id)),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
