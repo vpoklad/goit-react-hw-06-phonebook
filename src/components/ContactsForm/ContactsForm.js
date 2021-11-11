@@ -1,21 +1,23 @@
 import { v4 as uuid } from 'uuid';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import s from './ContactsForm.module.css';
 import { addContact } from '../../redux/actions';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-function ContactsForm({ addNewContact }) {
+export default function ContactsForm() {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm();
+  const dispatch = useDispatch();
+
   const onSubmit = data => {
-    addNewContact({ ...data, id: uuid() });
+    dispatch(addContact({ ...data, id: uuid() }));
     reset();
   };
 
@@ -70,11 +72,11 @@ function ContactsForm({ addNewContact }) {
   );
 }
 
-const mapToDispatchProps = dispatch => ({
-  addNewContact: contact => dispatch(addContact(contact)),
-});
-export default connect(null, mapToDispatchProps)(ContactsForm);
+// const mapToDispatchProps = dispatch => ({
+//   addNewContact: contact => dispatch(addContact(contact)),
+// });
+// export default connect(null, mapToDispatchProps)(ContactsForm);
 
-ContactsForm.propTypes = {
-  addNewContact: PropTypes.func.isRequired,
-};
+// ContactsForm.propTypes = {
+//   addNewContact: PropTypes.func.isRequired,
+// };
